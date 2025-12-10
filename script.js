@@ -12,6 +12,19 @@ const products = [
 // DOM elements
 const productList = document.getElementById("product-list");
 let cart=[];
+if (!sessionStorage.getItem("cart")) {
+  const preset = [
+    { id: 1, name: "Product 1", price: 10 }, 
+    { id: 5, name: "Product 5", price: 50 },
+    { id: 1, name: "Product 1", price: 10 }
+  ];
+  sessionStorage.setItem("cart", JSON.stringify(preset));
+}
+
+// Load cart from sessionStorage
+cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+
 const cartList=document.getElementById("cart-list");
 const totalPriceEl=document.getElementById("total-price");
 const clearCartBtn=document.getElementById("clear-cart-btn");
