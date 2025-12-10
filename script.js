@@ -1,7 +1,5 @@
-// This is the boilerplate code given for you
-// You can modify this code 
 // Product data
-const products = [ 
+const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
   { id: 3, name: "Product 3", price: 30 },
@@ -9,29 +7,13 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-// DOM elements
 const productList = document.getElementById("product-list");
-let cart=[];
-if (!sessionStorage.getItem("cart")) {
-  const preset = [
-    { id: 1, name: "Product 1", price: 10 }, 
-    { id: 5, name: "Product 5", price: 50 },
-    { id: 1, name: "Product 1", price: 10 }
-  ];
-  sessionStorage.setItem("cart", JSON.stringify(preset));
-}
+const cartList = document.getElementById("cart-list");
+const totalPriceEl = document.getElementById("total-price");
+const clearCartBtn = document.getElementById("clear-cart-btn");
 
 // Load cart from sessionStorage
-cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-
-
-const cartList=document.getElementById("cart-list");
-const totalPriceEl=document.getElementById("total-price");
-const clearCartBtn=document.getElementById("clear-cart-btn");
-//session storage save
-function saveCart(){
-		sessionStorage.setItem('cart',JSON.stringify(cart));
-}
+let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
 // Render product list
 function renderProducts() {
@@ -40,62 +22,63 @@ function renderProducts() {
     li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
     productList.appendChild(li);
   });
-	document.querySelectorAll(".add-to-cart-btn").forEach((btn)=>{
-		btn.addEventListener('click',()=>{
-			addToCart(Number(btn.dataset.id));
-		});
-	});
+
+  // Add event listeners once
+  document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      addToCart(Number(btn.dataset.id));
+    });
+  });
 }
 
 // Render cart list
 function renderCart() {
-	cartList.innerHTML="";
+  cartList.innerHTML = "";
 
-	cart.forEach((item)=>{
-		const li=document.createElement("li");
-			li.innerHTML=`
-			${item.name} - $${item.price}
-			<button class="remove-btn" data-id="${item.id}">Remove</button>
-			`;
-		cartList.appendChild(li);
-	});
+  cart.forEach((item) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${item.name} - $${item.price}
+      <button class="remove-btn" data-id="${item.id}">Remove</button>
+    `;
+    cartList.appendChild(li);
+  });
 
-	document.querySelectorAll(".remove-btn").forEach((btn)=>{
-		btn.addEventListener('click',()=>{
-			removeFromCart(Number(btn.dataset.id));
-		});
-	});
-	const total=cart.reduce((sum,item)=>sum + item.price,0);
-	totalPriceEl.textContent="total: $"+total;
+  document.querySelectorAll(".remove-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      removeFromCart(Number(btn.dataset.id));
+    });
+  });
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  totalPriceEl.textContent = "total: $" + total;
 }
 
 // Add item to cart
 function addToCart(productId) {
-	const product=products.find((p)=>p.id===productId);
-	if(product){
-	cart.push(product);
-		saveCart();
-	renderCart();
-	}
+  const product = products.find((p) => p.id === productId);
+  cart.push(product);
+
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 }
 
-// Remove item from cart
+// Remove item
 function removeFromCart(productId) {
-	cart=cart.filter((item)=>item.id!==productId);
-	saveCart();
-	renderCart();
+  cart = cart.filter((item) => item.id !== productId);
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 }
 
 // Clear cart
 function clearCart() {
-	cart=[];
-	sessionStorage.removeItem("cart");
-	renderCart();
-	
+  cart = [];
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 }
-clearCartBtn.addEventListener("click",clearCart);
+
+clearCartBtn.addEventListener("click", clearCart);
 
 // Initial render
 renderProducts();
 renderCart();
-
