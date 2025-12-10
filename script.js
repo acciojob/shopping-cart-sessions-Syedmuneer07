@@ -15,6 +15,11 @@ let cart=[];
 const cartList=document.getElementById("cart-list");
 const totalPriceEl=document.getElementById("total-price");
 const clearCartBtn=document.getElementById("clear-cart-btn");
+//session storage save
+function saveCart(){
+		sessionStorage.setItem('cart',JSON.stringify(cart));
+}
+
 // Render product list
 function renderProducts() {
   products.forEach((product) => {
@@ -54,19 +59,24 @@ function renderCart() {
 // Add item to cart
 function addToCart(productId) {
 	const product=products.find((p)=>p.id===productId);
+	if(product){
 	cart.push(product);
+		saveCart();
 	renderCart();
+	}
 }
 
 // Remove item from cart
 function removeFromCart(productId) {
 	cart=cart.filter((item)=>item.id!==productId);
+	saveCart();
 	renderCart();
 }
 
 // Clear cart
 function clearCart() {
 	cart=[];
+	sessionStorage.removeItem("cart");
 	renderCart();
 	
 }
